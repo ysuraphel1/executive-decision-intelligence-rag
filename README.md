@@ -2,7 +2,7 @@
 
 A Retrieval-Augmented Generation (RAG) application that analyzes how public leaders make strategic decisions using indexed source documents, semantic search, and grounded LLM responses.
 
-This project demonstrates an end-to-end applied AI pipeline using Python, LangChain, OpenAI embeddings, Chroma vector search, and a Streamlit chat interface.
+This project demonstrates an end-to-end applied GenAI pipeline using Python, LangChain, OpenAI embeddings, ChromaDB vector storage, and a Streamlit chat interface.
 
 ---
 
@@ -10,9 +10,9 @@ This project demonstrates an end-to-end applied AI pipeline using Python, LangCh
 
 This system allows users to ask questions such as:
 
-- How does Jamie Dimon approach risk?
-- How does Satya Nadella think about AI strategy?
-- What themes appear in Jensen Huang’s innovation decisions?
+- How does Jamie Dimon make decisions under uncertainty?
+- How does Satya Nadella approach AI strategy?
+- What innovation themes appear in Jensen Huang’s leadership?
 
 The application retrieves relevant source material from an indexed document corpus and generates answers grounded strictly in retrieved context.
 
@@ -41,135 +41,114 @@ GitHub Codespaces (development environment)
 
 ---
 
-## Project Structure
+## Quick Start
 
-app/
-    ingest.py
-    rag.py
-    main.py
-    streamlit_app.py
-    data/
-        raw/
-        chroma_db/
+Clone the repository:
 
-README.md
-requirements.txt
-
----
-
-## Setup Instructions
-
-Clone repository:
-
-cat > README.md <<'EOF'
-# Executive Decision Intelligence RAG
-
-A Retrieval-Augmented Generation (RAG) application that analyzes how public leaders make strategic decisions using indexed source documents, semantic search, and grounded LLM responses.
-
-## Overview
-
-This project demonstrates an end-to-end AI pipeline that:
-
-- Ingests leadership commentary from text sources
-- Chunks documents into embeddings
-- Stores vectors in ChromaDB
-- Retrieves relevant context using semantic search
-- Generates grounded answers with OpenAI models
-- Serves responses through a Streamlit web interface
-
-Example questions:
-
-- How does Jamie Dimon make decisions?
-- How does Satya Nadella approach AI strategy?
-- What innovation themes appear in Jensen Huang’s leadership?
-
-## Tech Stack
-
-Python  
-LangChain  
-OpenAI API (embeddings + chat model)  
-ChromaDB (vector database)  
-Streamlit (client interface)  
-GitHub Codespaces (development environment)
-
-## Project Structure
-
-app/
-  ingest.py
-  rag.py
-  main.py
-  streamlit_app.py
-  data/
-    raw/
-    chroma_db/
-
-README.md
-requirements.txt
-
-## Setup Instructions
-
-Clone repo:
-
-git clone <your_repo_url>
+git clone https://github.com/ysuraphel1/executive-rag-local.git  
 cd executive-rag-local
 
-Create environment:
+Create a virtual environment:
 
-python3 -m venv .venv
+python3 -m venv .venv  
 source .venv/bin/activate
 
 Install dependencies:
 
 pip install -r requirements.txt
 
-Create .env file:
+Add your OpenAI API key:
 
-OPENAI_API_KEY=your_api_key_here
+echo "OPENAI_API_KEY=your_api_key_here" > .env
 
-Add text files to:
+Add source documents:
+
+Place `.txt` files inside:
 
 app/data/raw/
 
-Then ingest:
+Example:
 
-cd app
+jamie_dimon_risk.txt  
+satya_nadella_ai.txt  
+jensen_huang_innovation.txt
+
+Ingest documents into the vector database:
+
+cd app  
 python ingest.py
 
-Run CLI:
-
-python main.py
-
-Run web app:
+Launch the web interface:
 
 streamlit run streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+
+---
+
+## Example Queries
+
+How does Jamie Dimon make decisions?  
+How does Satya Nadella talk about AI strategy?  
+What innovation themes appear in Jensen Huang's leadership?
+
+---
+
+## Project Structure
+
+executive-rag-local/
+
+├── app/  
+│   ├── ingest.py  
+│   ├── rag.py  
+│   ├── main.py  
+│   ├── streamlit_app.py  
+│   └── data/  
+│       ├── raw/  
+│       └── chroma_db/  
+
+├── requirements.txt  
+├── README.md  
+└── .env.example  
+
+---
 
 ## Features
 
 Document chunking pipeline  
-Embedding-based retrieval  
-Metadata filtering by leader  
-Source-grounded responses  
+OpenAI embedding generation  
+Chroma vector storage  
+Metadata-aware retrieval filtering  
+Source-grounded answer generation  
 Streamlit chat interface  
 Expandable corpus architecture
+
+---
 
 ## Limitations
 
 The system only answers questions about leaders included in the indexed dataset.
 
-To expand coverage, add additional documents to:
+To expand coverage:
+
+Add additional `.txt` documents to:
 
 app/data/raw/
 
 Then rerun:
 
+cd app  
 python ingest.py
+
+---
 
 ## Future Improvements
 
 Automatic ingestion from transcripts and interviews  
-Hybrid keyword + semantic retrieval  
+Named-entity detection for dynamic retrieval filtering  
+Hybrid keyword + semantic search  
 Conversation memory support  
 Cloud deployment with API endpoint
+
+---
 
 ## Author
 
