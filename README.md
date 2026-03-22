@@ -51,7 +51,8 @@ GitHub Codespaces (development environment)
 
 Clone the repository:
 
-git clone https://github.com/ysuraphel1/executive-decision-intelligence-rag.git 
+git clone https://github.com/ysuraphel1/executive-decision-intelligence-rag.git
+  
 cd executive-decision-intelligence-rag
 
 Create a virtual environment:
