@@ -18,6 +18,10 @@ The application retrieves relevant source material from an indexed document corp
 
 ---
 
+## Demo
+
+![App Screenshot](docs/demo.png)
+
 ## Architecture
 
 User Question  
@@ -75,12 +79,11 @@ jensen_huang_innovation.txt
 
 Ingest documents into the vector database:
 
-cd app  
-python ingest.py
+python app/ingest.py
 
 Launch the web interface:
 
-streamlit run streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+streamlit run app/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
 
 ---
 
@@ -154,4 +157,4 @@ Cloud deployment with API endpoint
 
 Yonathan Suraphel
 
-Applied AI / Data Systems Portfolio Project
+Applied AI Portfolio Project
