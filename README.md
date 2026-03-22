@@ -22,6 +22,8 @@ The application retrieves relevant source material from an indexed document corp
 
 ![App Screenshot](docs/demo.png)
 
+---
+
 ## Architecture
 
 User Question  
@@ -49,8 +51,8 @@ GitHub Codespaces (development environment)
 
 Clone the repository:
 
-git clone https://github.com/ysuraphel1/executive-rag-local.git  
-cd executive-rag-local
+git clone https://github.com/ysuraphel1/executive-decision-intelligence-rag.git 
+cd executive-decision-intelligence-rag
 
 Create a virtual environment:
 
@@ -97,7 +99,7 @@ What innovation themes appear in Jensen Huang's leadership?
 
 ## Project Structure
 
-executive-rag-local/
+executive-decision-intelligence-rag/
 
 ├── app/  
 │   ├── ingest.py  
