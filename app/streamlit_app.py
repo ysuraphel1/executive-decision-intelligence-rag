@@ -1,7 +1,7 @@
 import streamlit as st
 from rag import ask_rag
 
-st.title("Which leader's decision-making frameworks would you like more insight on?")
+st.title("Leadership Decision Intelligence Explorer")
 
 question = st.text_input("Ask a question")
 
