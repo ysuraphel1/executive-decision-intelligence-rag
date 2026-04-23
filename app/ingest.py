@@ -1,55 +1,74 @@
 from pathlib import Path
 from dotenv import load_dotenv
-import os
 
-import chromadb
-from chromadb.utils import embedding_functions
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_core.documents import Document
 
 load_dotenv()
 
-RAW_DIR = Path("app/data/raw")
-DB_DIR = "app/data/chroma_db"
+BASE_DIR = Path(__file__).parent
+RAW_DIR = BASE_DIR / "data" / "raw"
+DB_DIR = str(BASE_DIR / "data" / "chroma_db")
 
-def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 150):
-    chunks = []
-    start = 0
-    while start < len(text):
-        end = start + chunk_size
-        chunks.append(text[start:end])
-        start += chunk_size - overlap
-    return chunks
+def _leader_from_stem(stem: str) -> str:
+    """Derive a display name from a filename stem.
+
+    Expects filenames like  first_last_company.txt  or  first_last.txt.
+    Takes the first two underscore-separated tokens and title-cases them.
+    Falls back to the whole stem if there is only one token.
+    """
+    parts = stem.split("_")
+    if len(parts) >= 2:
+        return " ".join(p.capitalize() for p in parts[:2])
+    return stem.replace("_", " ").title()
+
+
+def load_documents() -> list[Document]:
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
+    docs = []
+    for file in sorted(RAW_DIR.glob("*.txt")):
+        text = file.read_text(encoding="utf-8")
+        leader = _leader_from_stem(file.stem)
+        chunks = splitter.split_text(text)
+        for i, chunk in enumerate(chunks):
+            docs.append(
+                Document(
+                    page_content=chunk,
+                    metadata={"source": file.name, "leader": leader, "chunk": i},
+                )
+            )
+    return docs
+
 
 def main():
-    client = chromadb.PersistentClient(path=DB_DIR)
-
-    embedding_fn = embedding_functions.OpenAIEmbeddingFunction(
-        api_key=os.environ["OPENAI_API_KEY"],
-        model_name="text-embedding-3-small"
-    )
-
-    collection = client.get_or_create_collection(
-        name="executive_intelligence",
-        embedding_function=embedding_fn
-    )
-
-    ids = []
-    documents = []
-    metadatas = []
-
-    for file in RAW_DIR.glob("*.txt"):
-        text = file.read_text(encoding="utf-8")
-        chunks = chunk_text(text)
-        for i, chunk in enumerate(chunks):
-            ids.append(f"{file.stem}_{i}")
-            documents.append(chunk)
-            metadatas.append({"source": file.name, "chunk": i})
-
-    if not documents:
-        print("No .txt files found in app/data/raw")
+    docs = load_documents()
+    if not docs:
+        print(f"No .txt files found in {RAW_DIR}")
         return
 
-    collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
-    print(f"Loaded {len(documents)} chunks into Chroma.")
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+
+    # Delete existing collection so re-ingestion is idempotent
+    import chromadb
+    client = chromadb.PersistentClient(path=DB_DIR)
+    try:
+        client.delete_collection("executive_intelligence")
+    except Exception:
+        pass
+
+    vectordb = Chroma.from_documents(
+        documents=docs,
+        embedding=embeddings,
+        persist_directory=DB_DIR,
+        collection_name="executive_intelligence",
+    )
+
+    print(f"Ingested {len(docs)} chunks from {RAW_DIR} into {DB_DIR}")
+    leaders = sorted({d.metadata["leader"] for d in docs})
+    print(f"Leaders indexed: {', '.join(leaders)}")
+
 
 if __name__ == "__main__":
     main()
