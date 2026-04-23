@@ -47,6 +47,29 @@ GitHub Codespaces (development environment)
 
 ---
 
+## my quick start
+
+# 1. Install dependencies
+pip install -r requirements.txt
+pip install openai
+
+# 2. Set your API key
+echo "OPENAI_API_KEY=your_key_here" > .env
+
+# 3. Dry run — preview all 500 filenames, no API calls
+python generate_corpus.py --dry-run
+
+# 4. Generate a small batch to verify quality before committing to all 500
+python generate_corpus.py --limit 5
+
+# 5. Ingest generated docs into ChromaDB
+python app/ingest.py
+
+# 6. Launch the app
+streamlit run app/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+
+---
+
 ## Quick Start
 
 Clone the repository:
