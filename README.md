@@ -1,4 +1,4 @@
-# Executive Decision Intelligence RAG
+# ClarityIQ | Executive Decision Intelligence RAG
 
 A Retrieval-Augmented Generation (RAG) application that analyzes how public leaders make strategic decisions using indexed source documents, semantic search, and grounded LLM responses.
 
